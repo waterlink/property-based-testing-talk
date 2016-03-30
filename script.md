@@ -118,3 +118,16 @@ not only input and output arguments).
 - so you will have to use Ports & Adapters architecture,
 - that allows you to use different adapter for the same interface,
 - which could be a `Fake`, `In-Memory`, `File-Based`, etc.
+
+- Such `Fake` implementations doesn't have to always be fast and always return success. Actually this is pretty useful to instruct them to be slow, return timeouts and failures in specific properties to see how your code handles that.
+- Additionally, this will actually make you handle these cases. I rarely see code, that uses database directly having any error handling if database goes away, or just too slow.
+- This way PBT makes you think more about unhappy paths, as opposed to thinking only about happy paths in typical EBT.
+- It makes it painful to ignore corner cases.
+
+### PBT as a monitoring tool in production
+
+- You can really re-use properties to run checks on your real production data continuously.
+- This way PBT are much more useful then EBT,
+- since what is important in PBT is important in production.
+
+## How PBT and TDD play together?
