@@ -55,6 +55,7 @@ Solving an unrelated failing EBTest might involve:
 
 - instead of figuring out all edge cases and providing examples for them,
 - you simply generate them;
+- it still makes sense to have a one or two example tests to serve as a usage documentation;
 - effectively you do much more testing with much less code;
 - this means lower maintenance is required,
 - though harder and more intense, and involved maintenance :),
@@ -79,6 +80,11 @@ Solving an unrelated failing EBTest might involve:
 
 ### Generators and their importance to the understanding of business domain
 
+- Limit usage of built-in basic-type generators and write your own custom generators for your domain types/objects/data structures. This allows for much deeper understanding of the problem at hand. Also allows to have much smarter shrinking strategies.
+- Talk about shrinking a bit, and why it is cool (some examples of non-shrinked output and shrinked output).
+
+- Coming up with a generator may be even hard sometimes, and, oh my god, involve talking to people on the team, to business people, experts in the domain, stakeholders, and even users! I personally consider it a good thing.
+
 - They can be actually used in EBT too (or in REPL), and very helpful at that;
 - they are like test factories, only much more powerful.
 
@@ -87,6 +93,14 @@ Solving an unrelated failing EBTest might involve:
 - and what is the valid form/structure, that your domain objects can have.
 
 - Building generators from small to large (by composition).
+
+- Building generators is an investment
+- And return on the investment includes:
+  * better understanding of the domain for yourself and future readers of your code,
+  * they can be re-used in other properties,
+  * they can be re-used in other generators,
+  * they can be re-used in conventional EBT,
+  * they can be used anywhere, where you need to construct a domain object/data structure without being specific about some parts of it, e.g.: in REPL to try something out.
 
 ### Labeling and classification for property checks' results
 
@@ -124,10 +138,56 @@ not only input and output arguments).
 - This way PBT makes you think more about unhappy paths, as opposed to thinking only about happy paths in typical EBT.
 - It makes it painful to ignore corner cases.
 
+- Not only it will encourage better architecture, as a bonus, it makes following Liskov Substitution Principle (L part of SOLID principles) really simple:
+  * per definition: for each property P(x), that holds for a type T, it should hold for its subtype S;
+  * this means, that all property-based tests for supertype have to hold for subtypes, otherwise LSP is violated;
+  * this enables huge test suite code re-use, when subtyping or inheritance is involved + protection from violating LSP = two birds with one stone.
+
 ### PBT as a monitoring tool in production
 
 - You can really re-use properties to run checks on your real production data continuously.
 - This way PBT are much more useful then EBT,
 - since what is important in PBT is important in production.
 
+### How to write properties properly?
+
+- Common mistake: spelling out the implementation or part of the implementation in the property.
+- Instead, one should use one of these concepts:
+  * Symmetry
+  * Multiple paths
+  * Induction,
+  * Idempotence,
+  * Invariants,
+  * Consistency,
+  * "Hard to solve, easy to verify",
+  * Test Oracles,
+  * State Machine Model (for stateful System Under Test).
+
+### Impact of PBT
+
+- Less code, less maintenance and more coverage!;
+- You think much more about types/objects in your domain (even if your language is very dynamically typed);
+- Allows to find bugs not only in System Under Test, but to find inconsistencies in the specification itself (in test code and domain understanding);
+- Allows to test more, than can be formally verified, e.g.: normal distribution of some combinatorial data;
+- Allows for exploration of your data and behavior by using classification features of PBT. This way you can understand how fast and on which input your system under test is, and how much trivial and non-trivial data you have produced by your generators;
+- Leads to better design decisions.
+
 ## How PBT and TDD play together?
+
+- In EBT, at times, it is hard to make a small incremental change to make the current failing test pass, and programmer simply have to implement the whole solution to make it pass. It is no longer test-driven solution and may contain un-tested bits.
+- On contrary in PBT that is not the case. Properties verify cross-cutting concepts of the system under test and one by one drive incremental implementation. Though, it is quite important to remember the rule of TDD:
+  * "As tests get more specific, code gets more generic".
+  * But this is applicable only to EBT..
+  * If we take the most useful essence of this statement:
+  * "As tests get more constraining, code gets more generic".
+  * I can apply this to properties now:
+  * "As properties get more constraining, code gets more generic".
+  * So to do TDD with PBT it is important to start with less constraining (more generic) properties and go towards more constraining (less generic) properties, while the system under tests gets more generic, until it meets desired requirements.
+  * Example of less constraining property is that area of a figure under test is non-negative, instead of verifying some formula right away.
+  * Starting from less constraining properties, additionally, provides a safety net in case you get some latter property or generator wrong. They will highlight a problem immediately. And getting less constraining properties right is simpler.
+
+- In EBT, often, "tests recycling" takes place, where you remove some tests, that were created only to bootstrap your solution at first stages.
+- Not exactly the same, but similar happens in PBT:
+  * you might have to remove some properties, when they are implied by other properties.
+
+- Additional benefit of PBT, is that properties may find bugs not only in the system under the test, and also in other properties. This is not the case with EBT: if you have a bug in test A it will not be revealed by test B.
