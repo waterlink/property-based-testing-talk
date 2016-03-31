@@ -39,7 +39,7 @@ by That TDD Fellow
 
 For all **Integer** `X` and **Integer** `Y`,
 
-Assert that: `X + Y == Y + X` (associativity).
+Assert that: `X + Y == Y + X` (reflexivity).
 
 
 
