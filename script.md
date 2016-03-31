@@ -25,6 +25,14 @@ At the end of this talk, hopefully, you will be able to:
 
 ### Very short definition on what PBT is
 
+It is a style of testing, in which programmer writes generic assertions about properties that a SUT should fulfill.
+
+On contrary to EBT, programmer does not specify concrete values for a data, rather only kinds of data (generators).
+
+Simple example:
+
+For all **integer** `x` and **integer** `y`, assert that: `x + y == y + x`.
+
 ### Plan for the talk
 
 1. Language-agnostic guide about Property-Based Testing (PBT).
@@ -191,3 +199,113 @@ not only input and output arguments).
   * you might have to remove some properties, when they are implied by other properties.
 
 - Additional benefit of PBT, is that properties may find bugs not only in the system under the test, and also in other properties. This is not the case with EBT: if you have a bug in test A it will not be revealed by test B.
+
+- I found it interesting that doing TDD with PBT forces your to first test your generators, once you want to use them to test your SUT. This involves figuring out, what actually is a valid data and what is not for your SUT. The code used to test generators can be immediately re-used for validation of the input. That is another nice side-effect of using TDD with PBT.
+
+## Examples of PBT in different programming languages
+
+### Haskell example
+
+Library of choice is original `QuickCheck`.
+
+#### Add
+
+#### Mul
+
+#### Sort
+
+### Clojure example
+
+Library of choice is `org.clojure/test.check`.
+
+#### Add
+
+#### Mul
+
+#### Sort
+
+### Ruby example
+
+Library of choice is gem `rantly`, homepage: https://github.com/abargnesi/rantly.
+
+#### Add
+
+#### Mul
+
+#### Sort
+
+### Golang example
+
+Library of choice is `testing/quick` from standard library. I was surprised
+Golang has such a library in the standard library.
+
+#### Add
+
+#### Mul
+
+#### Sort
+
+### Crystal example
+
+Library of choice is shard https://github.com/waterlink/quick.cr
+
+#### Add
+
+#### Mul
+
+#### Sort
+
+### Example generators
+
+(only Crystal here)
+
+#### UppercaseLetter generator for Diamond Kata
+
+#### GameGen for Bowling Kata
+
+## Building your own PBT library
+
+### First of all, it is not necessary to use library at all for this
+
+A simple loop and bunch of calls to random will do.
+They will get repetitive, and if you are doing PBT seriously you need to have
+proper generators. You still can have generators by conforming to some interface,
+like `.next() : T` method or something. Then you need shrinking, otherwise failures
+are not that readable and helpful. Once you do that on your own, you will probably
+end up with your own implementation of PBT, that hopefully can be extracted to
+the library.
+
+### If you set out to build such a library with nice APIs for a programming language
+
+that doesn't have it? Or if it is not good enough in your opinion?
+
+What do you think you need?
+
+1. Cover all basic types with built-in generators, so that users don't have to
+   implement them over and over again.
+2. Come up with nice interface for a generator, so that users can implement
+   their own generators easily.
+3. Allow for easy combination of generators, for example let your users express:
+   `an Array of UppercaseLetters` or `HashMap of UppercaseLetter to Integer`, etc.
+4. Build actual property checking engine, that will allow your users to specify
+   data they need (by providing generators, built-in or custom, or combinations)
+   and property they want to check (this is probably some lambda expression, or
+   function/method/object if you don't have lambdas in your programming language).
+5. Property checking engine should ask generators for data and supply this data
+   to the property and see if property returns success (you define what success is:
+   boolean, exception/no-exception or value of specific type). It should do it
+   N times (usually 100). Oh, and you should give your user chance to control N.
+6. Last necessary part of PBT is shrinking. Without good shrinking mechanisms in
+   place, failures produced by random data are not that useful at all. So provide
+   sane shrinking mechanism. Define default shrinking strategies on built-in
+   generators. And give your user simple way to define their own strategies for
+   their custom generators.
+
+Optional parts:
+
+- labeling to allow user to improve readability of failures
+- classification to allow user to do exploration on quantifiable properties of generators and SUT
+
+## Bottom line
+
+Write less tests. Generate them.
