@@ -151,12 +151,6 @@ not only input and output arguments).
   * this means, that all property-based tests for supertype have to hold for subtypes, otherwise LSP is violated;
   * this enables huge test suite code re-use, when subtyping or inheritance is involved + protection from violating LSP = two birds with one stone.
 
-### PBT as a monitoring tool in production
-
-- You can really re-use properties to run checks on your real production data continuously.
-- This way PBT are much more useful then EBT,
-- since what is important in PBT is important in production.
-
 ### How to write properties properly?
 
 - Common mistake: spelling out the implementation or part of the implementation in the property.
@@ -218,19 +212,11 @@ Library of choice is original `QuickCheck`.
 
 Library of choice is `org.clojure/test.check`.
 
-#### Add
-
-#### Mul
-
 #### Sort
 
 ### Ruby example
 
 Library of choice is gem `rantly`, homepage: https://github.com/abargnesi/rantly.
-
-#### Add
-
-#### Mul
 
 #### Sort
 
@@ -239,29 +225,21 @@ Library of choice is gem `rantly`, homepage: https://github.com/abargnesi/rantly
 Library of choice is `testing/quick` from standard library. I was surprised
 Golang has such a library in the standard library.
 
-#### Add
-
-#### Mul
-
 #### Sort
 
 ### Crystal example
 
 Library of choice is shard https://github.com/waterlink/quick.cr
 
-#### Add
-
-#### Mul
-
 #### Sort
 
 ### Example generators
 
+I was speaking a lot about generators and how important they are. Let me show you couple of examples.
+
 (only Crystal here)
 
 #### UppercaseLetter generator for Diamond Kata
-
-#### GameGen for Bowling Kata
 
 ## Building your own PBT library
 
@@ -309,3 +287,7 @@ Optional parts:
 ## Bottom line
 
 Write less tests. Generate them.
+
+## Thanks
+
+## Links
